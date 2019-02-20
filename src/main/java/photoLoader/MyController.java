@@ -61,8 +61,8 @@ public class MyController {
     }
 
     @RequestMapping("/choose_for_delete")
-    public String chooseForDelete() {
-
+    public String chooseForDelete(Model model) {
+model.addAttribute("photos",photos);
             return "index_delete";
     }
     @RequestMapping("/list_for_delete")
@@ -70,10 +70,14 @@ public class MyController {
         if (photos.remove(id) == null)
             throw new PhotoNotFoundException();
         else
-               list_delete.put(id, photos.get(id));
+                         list_delete.put(id, photos.get(id));
                     return "index_delete";
                 }
+    @RequestMapping("/open_list_for_delete")
+    public Map<Long, byte[]> openForDelete() {
 
+        return photos;
+    }
 
 
     private ResponseEntity<byte[]> photoById(long id) {
