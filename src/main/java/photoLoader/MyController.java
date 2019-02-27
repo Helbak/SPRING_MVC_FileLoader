@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyController {
 
     private Map<Long, byte[]> photos = new ConcurrentHashMap<>();
-    private Map<Long, byte[]> list_delete = new ConcurrentHashMap<>();
+
     @RequestMapping("/")
     public String onIndex() {
         return "index";
@@ -62,23 +62,23 @@ public class MyController {
 
     @RequestMapping("/choose_for_delete")
     public String chooseForDelete(Model model) {
-model.addAttribute("photos",photos);
+model.addAttribute("photos",photos.keySet());
             return "index_delete";
     }
-    @RequestMapping("/list_for_delete")
-    public String listForDelete(@PathVariable("photo_id") long id) {
-        if (photos.remove(id) == null)
-            throw new PhotoNotFoundException();
-        else
-                         list_delete.put(id, photos.get(id));
-                    return "index_delete";
-                }
-    @RequestMapping("/open_list_for_delete")
-    public Map<Long, byte[]> openForDelete() {
 
-        return photos;
+
+
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public String onDelete(@RequestParam(value = "photos", required = false) String[] photosId) {
+        if (photosId != null) {
+            for (String formData : photosId) {
+                Long id = Long.valueOf(formData);
+                photos.remove(id);
+            }
+        }
+        return "/index";
     }
-
 
     private ResponseEntity<byte[]> photoById(long id) {
         byte[] bytes = photos.get(id);
